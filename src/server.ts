@@ -72,6 +72,13 @@ app.get('/api/users/:id', async (req: Request, res: Response)=> {
         SELECT * FROM users WHERE id=$1
       `, [id])
       
+      if(result.rowCount === 0){
+        res.status(404).json({
+        success : false,
+        message : "user not found",
+        data    : {} 
+      })
+      }
       res.status(400).json({
         success : true,
         message : "user retrieved successfully",
@@ -86,6 +93,40 @@ app.get('/api/users/:id', async (req: Request, res: Response)=> {
   }
 })
 
+app.put('/api/users/:id', async(req:Request, res:Response) => {
+  const {id} = req.params
+  const {name, password, age, is_active} = req.body;
+
+  // console.log(id, name, password, age, is_active)
+  try {
+    const result = await pool.query(`
+      UPDATE users 
+      SET name=$1, password=$2, age=$3, is_active=$4
+      WHERE id=$5
+      RETURNING *
+      `, [name, password, age, is_active, id])
+
+      if(result.rowCount === 0){
+        res.status(404).json({
+        success: false,
+        message: "User not found",
+        data: {}
+      })
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "user updated successfully",
+        data: result.rows[0]
+      })
+  } catch (error: any) {
+    res.status(201).json({
+        success: false,
+        message: "failed user update",
+        error: error
+      })
+  }
+})
 
 app.post('/api/users', async (req: Request, res: Response)=> {
   const {name, email, password, age, is_active} = req.body;
