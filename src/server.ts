@@ -1,4 +1,4 @@
-import express, { type Application, type Request, type Response } from "express"
+import express, { response, type Application, type Request, type Response } from "express"
 import {Pool} from "pg"
 
 const app: Application = express()
@@ -123,6 +123,35 @@ app.put('/api/users/:id', async(req:Request, res:Response) => {
     res.status(201).json({
         success: false,
         message: "failed user update",
+        error: error
+      })
+  }
+})
+
+app.delete('/api/users/:id', async(req: Request, res=response) => {
+  const {id} = req.params
+  try {
+    const result = pool.query(`
+      DELETE FROM users 
+      WHERE id=$1
+      `, [id])
+
+      if((await result).rowCount === 0){
+        res.status(500).json({
+        success: false,
+        message: "failed, NO USER FOUND",
+        data: {}
+      })
+      }
+      res.status(200).json({
+        success: true,
+        message: "user deleted successfully",
+        data: {}
+      })
+  } catch (error:any) {
+    res.status(500).json({
+        success: false,
+        message: "error user delete",
         error: error
       })
   }
