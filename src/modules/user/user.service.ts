@@ -12,17 +12,17 @@ const getAllUserFromDB = async() => {
 }
 
 const createUserIntoDB = async(payload:IUser) => {
-    const {name, email, password, age} = payload
+    const {name, email, password, age, is_active} = payload
 
     const hashedPassword = await bcrypt.hash(password, 10);
    
     const result = await pool.query(
       `
-        INSERT INTO users(name, email, password, age)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO users(name, email, password, age, is_active)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *
         `,
-      [name, email, hashedPassword, age],
+      [name, email, hashedPassword, age, is_active],
     );
     
     delete result.rows[0].password
@@ -42,7 +42,8 @@ const getSingleUserFromDB = async(id:string) => {
 }
 
 const updateUserToDB = async(payload: IUser, id: string) => {
-  const {name, email, password, age, is_active} = payload
+  const {name, password, age, is_active} = payload
+  const hashedPassword = await bcrypt.hash(password, 10);
   const result = await pool.query(
       `
       UPDATE users 
@@ -50,7 +51,7 @@ const updateUserToDB = async(payload: IUser, id: string) => {
       WHERE id=$5
       RETURNING *
       `,
-      [name, password, age, is_active, id],
+      [name, hashedPassword, age, is_active, id],
     );
     return result;
   }
