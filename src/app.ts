@@ -1,6 +1,7 @@
 import express, { response, type Application, type Request, type Response } from "express"
 import { initDB, pool } from "./db";
 import { userRouter } from "./modules/user/user.route";
+import { profileRoute } from "./modules/profile/profile.route";
 
 
 const app: Application = express()
@@ -23,6 +24,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.use('/api/users', userRouter)
+app.use('/api/profile', profileRoute)
 
 
 
