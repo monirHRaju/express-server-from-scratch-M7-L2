@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import { pool } from "../../db";
 import { userService } from "./user.service";
 
 const createUser = async (req: Request, res: Response) => {
@@ -71,19 +70,11 @@ const getUserById = async (req: Request, res: Response) => {
 
 const updateUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, password, age, is_active } = req.body;
+  // const { name, password, age, is_active } = req.body;
 
   // console.log(id, name, password, age, is_active)
   try {
-    const result = await pool.query(
-      `
-      UPDATE users 
-      SET name=COALESCE($1, name), password=COALESCE($2, password), age=COALESCE($3, age), is_active=COALESCE($4, is_active)
-      WHERE id=$5
-      RETURNING *
-      `,
-      [name, password, age, is_active, id],
-    );
+    const result = await userService.updateUserToDB(req.body, id as string)
 
     if (result.rowCount === 0) {
       res.status(404).json({
@@ -109,14 +100,9 @@ const updateUserById = async (req: Request, res: Response) => {
 
 const deleteUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
+  
   try {
-    const result = pool.query(
-      `
-      DELETE FROM users 
-      WHERE id=$1
-      `,
-      [id],
-    );
+    const result = userService.deleteUserFromDB(id as string)
 
     if ((await result).rowCount === 0) {
       res.status(500).json({
