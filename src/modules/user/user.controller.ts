@@ -45,12 +45,8 @@ const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
-      `
-        SELECT * FROM users WHERE id=$1
-      `,
-      [id],
-    );
+    
+    const result = await userService.getSingleUserFromDB(id as string)
 
     if (result.rowCount === 0) {
       res.status(404).json({
