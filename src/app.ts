@@ -24,7 +24,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.use('/api/users', userRouter)
-app.use('/api/profile', profileRoute)
+app.use('/api/profiles', profileRoute)
 
 
 
