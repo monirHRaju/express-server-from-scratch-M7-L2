@@ -1,0 +1,6 @@
+Method->GET , Time-> 1780335525825, URL-> /api/healthMethod->GET , Time-> 1780335533427, URL-> /api/health
+ Method->GET , Time-> 1780335648244, URL-> /api/health 
+
+ Method->GET , Time-> 1780335652982, URL-> /api/users 
+
+ Method->GET , Time-> 1780335678853, URL-> /api/users/2 
